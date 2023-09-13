@@ -19,10 +19,9 @@ router
   .delete(protect, deleteKey);
 router.route("/user/:userId").get(protect, getAllKeysByUser);
 router.route("/share").post(protect, shareKey);
-router
-  .route()
-  .get("/shared/user/:userId")
-  .get(protect, getAllSharedKeysWithUser);
+router.route("/shared/user/:userId").get(protect, getAllSharedKeysWithUser);
 router
   .route("/note/:noteId/shared/:userIdToRemove")
   .delete(protect, removeShare);
+
+export default router;
