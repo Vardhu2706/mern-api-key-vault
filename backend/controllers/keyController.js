@@ -8,61 +8,181 @@ import User from "../models/userModel.js";
 // @access Private
 const createKey = asyncHandler(async (req, res) => {
   try {
-    const { title, body, owner } = req.body;
-
-    const accessList = [];
-    accessList.push(owner);
+    const { title, content, authorId } = req.body;
 
     const key = await Key.create({
       title,
-      body,
-      owner,
-      accessList,
+      content,
+      author: authorId,
     });
 
     if (key) {
       res.status(201).json(key);
     } else {
       res.status(401);
-      throw new Error("Key Creation Failed!");
+      throw new Error("Key Creation Failed");
     }
   } catch (error) {
     res.status(401);
-    throw new Error("Key Creation Failed!");
+    throw new Error("Error creating key");
   }
 });
 
-const getKey = asyncHandler(async (req, res) => {});
-
-const getAllKeys = asyncHandler(async (req, res) => {
-  const owner = req.body.user._id;
+// To-DO: Write DESC
+const getAllKeysByUser = asyncHandler(async (req, res) => {
   try {
-    const keyList = await Key.find({ owner });
+    const { userId } = req.params;
+    const keys = await Key.find({ author: userId });
 
-    res.status(200).json({ keyList });
+    if (keys) {
+      res.status(200).json(notes);
+    } else {
+      res.status(500);
+      throw new Error("Internal server error");
+    }
   } catch (error) {
-    res.status(404).json({ message: "Keys not found!" });
+    res.status(500);
+    throw new Error("Internal server error");
   }
 });
 
-const updateKey = asyncHandler(async (req, res) => {});
+// Get all shared keys
+const getAllSharedKeysWithUser = asyncHandler(async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-const deleteKey = asyncHandler(async (req, res) => {});
+    const sharedKeys = await Key.find({ sharedWith: { $in: [userId] } })
+      .populate("author")
+      .exec();
 
-const provideAccess = asyncHandler(async (req, res) => {
-  // const {keyId, newUser, }
-  // Get New User ID
-
-  // Get Key ID
-  const key = await Key.findOne({ _id: keyId });
-  const accessList = key.accessList;
-  accessList.push(newUserId);
-  key = await Key.update({ accessList: [...accessList] });
-
-  const newUserId = req.body.newUserId;
-  const owner = req.body.user._id;
+    if (sharedKeys.length !== 0) {
+      res.status(200).json(sharedKeys);
+    } else {
+      res.status(404);
+      throw new Error("No shared keys found for the user");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal server error");
+  }
 });
 
-const removeAccess = asyncHandler(async (req, res) => {});
+// Update Key
+const updateKey = asyncHandler(async (req, res) => {
+  try {
+    const { userId, keyId } = req.params;
+    const { title, content } = req.body;
 
-export { createKey, getAllKeys };
+    const updatedKey = await Note.findOneAndUpdate(
+      { __id: keyId, author: userId },
+      { title, content },
+      { new: true }
+    );
+
+    if (updatedNote) {
+      res.status(200).json(updatedNote);
+    } else {
+      res.status(404);
+      throw new Error("Not not found");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal server error");
+  }
+});
+
+// Delete Key
+const deleteKey = asyncHandler(async (req, res) => {
+  try {
+    const { userId, keyId } = req.params;
+    const deleteKey = await Key.findOneAndDelete({
+      _id: keyId,
+      author: userId,
+    });
+
+    if (deleteKey) {
+      res.status(200).json({ message: "Key deleted" });
+    } else {
+      res.status(404);
+      throw new Error("Key not found");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal server error");
+  }
+});
+
+// Share Key
+const shareKey = asyncHandler(async (req, res) => {
+  try {
+    const { keyId, userIdToShareWith } = req.body;
+    const key = await Key.findById(keyId);
+
+    if (key) {
+      const userToShareWith = await findById(userIdToShareWith);
+
+      if (userToShareWith) {
+        if (key.sharedWith.includes(userIdToShareWith)) {
+          res.status(400);
+          throw new Error("Key already shared with the user");
+        } else {
+          key.sharedWith.push(userIdToShareWith);
+          await key.save();
+
+          res.status(200).json({ message: "Key shared successfully" });
+        }
+      } else {
+        res.status(404);
+        throw new Error("User to share not found");
+      }
+    } else {
+      res.status(404);
+      throw new Error("Key not found");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal server error");
+  }
+});
+
+// Remove Share
+const removeShare = asyncHandler(async (req, res) => {
+  try {
+    const { keyId, userIdToRemove } = req.params;
+
+    const key = await Key.findById(keyId);
+
+    if (key) {
+      const userToRemove = await User.findById(userIdToRemove);
+
+      if (userToRemove) {
+        if (key.sharedWith.includes(userIdToRemove)) {
+          key.sharedWith.pull(userIdToRemove);
+          await key.save();
+        } else {
+          res.status(400);
+          throw new Error("Key is not shared with the user");
+        }
+      } else {
+        res.status(404);
+        throw new Error("User to remove not found");
+      }
+    } else {
+      res.status(404);
+      throw new Error("Key not found");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal server error");
+  }
+});
+
+export {
+  createKey,
+  getAllKeysByUser,
+  getAllSharedKeysWithUser,
+  updateKey,
+  deleteKey,
+  shareKey,
+  removeShare,
+};
