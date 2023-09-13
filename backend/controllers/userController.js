@@ -52,7 +52,7 @@ const getQRCode = asyncHandler(async (req, res) => {
   const id = uuidv4();
   try {
     const temp_secret = await speakeasy.generateSecret({
-      name: "MERN 2FA Template",
+      name: "API Key Vault",
     });
     res.json({
       id,
@@ -76,8 +76,6 @@ const registerUser = asyncHandler(async (req, res) => {
   // Fetching Form Data
   const { name, email, password, secret, token, otpAuthURL } = req.body;
 
-  console.log({ name, email, password, secret, token, otpAuthURL });
-
   // Verify Token
   try {
     const verified = speakeasy.totp.verify({
@@ -85,13 +83,10 @@ const registerUser = asyncHandler(async (req, res) => {
       encoding: "base32",
       token,
     });
-    console.log(verified);
 
     if (verified) {
-      console.log("OTP Veified");
       // Check if user exists
       const userExists = await User.findOne({ email });
-      console.log(userExists);
 
       // Throw error if already exists
       if (userExists) {
@@ -102,7 +97,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
       // Add User to DB
       //   Creating a new user if it doesn't exist
-      console.log({ name, email, password, secret, otpAuthURL });
       const user = await User.create({
         name,
         email,
@@ -110,10 +104,8 @@ const registerUser = asyncHandler(async (req, res) => {
         secret,
         otpAuthURL,
       });
-      console.log(user);
       if (user) {
         console.log("User Created!");
-        console.log(user);
         generateToken(res, user._id);
         res
           .status(201)

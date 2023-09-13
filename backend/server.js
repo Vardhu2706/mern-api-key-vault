@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
+import keyRoutes from "./routes/keyRoutes.js";
 import { JsonDB, Config } from "node-json-db";
 
 // The second argument is used to tell the DB to save after each push
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/users", userRoutes);
+app.use("/api/keys/", keyRoutes);
 
 if (process.env.NODE_ENV === "production") {
   const __dirname = path.resolve();
