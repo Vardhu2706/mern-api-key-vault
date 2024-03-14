@@ -2,6 +2,7 @@
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Hero from './Hero';
+import KeyAcc from './KeyAcc';
 
 function TabsComponent() {
     return (
@@ -15,10 +16,10 @@ function TabsComponent() {
                 <Hero />
             </Tab>
             <Tab eventKey="profile" title="Your Keys">
-                Tab content for Profile
+                <KeyAcc />
             </Tab>
             <Tab eventKey="longer-tab" title="Shared Keys">
-                Tab content for Loooonger Tab
+                <KeyAcc />
             </Tab>
         </Tabs>
     );

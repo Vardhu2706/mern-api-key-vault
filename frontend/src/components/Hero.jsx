@@ -16,6 +16,12 @@ const Hero = () => {
     e.preventDefault();
   }
 
+  const clear = () => {
+    setTitle("");
+    setKey("");
+    setDesc("");
+  };
+
   return (
     <div className=" py-5">
       <FormContainer>
@@ -52,9 +58,15 @@ const Hero = () => {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="mt-3">
-            Create Key
-          </Button>
+          <div className="mt-3 d-flex justify-content-between">
+            <Button type="submit" variant="secondary" className="mt-3" onClick={clear}>
+              Clear
+            </Button>
+            <Button type="submit" variant="primary" className="mt-3 ms-3">
+              Create Key
+            </Button>
+          </div>
+
         </Form>
       </FormContainer>
     </div>
