@@ -8,12 +8,13 @@ import User from "../models/userModel.js";
 // @access Private
 const createKey = asyncHandler(async (req, res) => {
   try {
-    const { title, content, desc, authorId } = req.body;
+    const { title, content, desc, documentation, authorId } = req.body;
 
     const key = await Key.create({
       title,
       content,
       desc,
+      documentation,
       author: authorId,
     });
 
@@ -72,11 +73,11 @@ const getAllSharedKeysWithUser = asyncHandler(async (req, res) => {
 const updateKey = asyncHandler(async (req, res) => {
   try {
     const { userId, keyId } = req.params;
-    const { title, content, desc } = req.body;
+    const { title, content, desc, documentation } = req.body;
 
     const updatedKey = await Note.findOneAndUpdate(
       { __id: keyId, author: userId },
-      { title, content, desc },
+      { title, content, desc, documentation },
       { new: true }
     );
 

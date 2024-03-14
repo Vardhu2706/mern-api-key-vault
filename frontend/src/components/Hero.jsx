@@ -5,12 +5,13 @@ import FormContainer from "../components/FormContainer";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
-const Hero = () => {
+const Hero = ({ data }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [title, setTitle] = useState("");
   const [key, setKey] = useState("");
   const [desc, setDesc] = useState("")
+  const [documentation, setDocumentation] = useState("")
 
   const createKeyHandler = async (e) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const Hero = () => {
   };
 
   return (
-    <div className=" py-5">
+    <div className="py-2">
       <FormContainer>
         <h6>Create a key to securely store and share.</h6>
 
@@ -55,6 +56,17 @@ const Hero = () => {
               placeholder="Enter Description"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+
+          {/* Description */}
+          <Form.Group className="my-2" controlId="desc">
+            <Form.Label>Documentation</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter Docs Link"
+              value={documentation}
+              onChange={(e) => setDocumentation(e.target.value)}
             ></Form.Control>
           </Form.Group>
 

@@ -24,6 +24,10 @@ const keySchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    documentation: {
+      type: String,
+      required: true
+    },
     sharedWith: [
       {
         type: mongoose.Schema.Types.ObjectId,
