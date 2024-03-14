@@ -1,5 +1,5 @@
 // Imports
-import Hero from "../components/Hero";
+import Hero from "../components/CreateKey";
 import TabsComponent from "../components/Tab";
 
 const HomeScreen = () => {

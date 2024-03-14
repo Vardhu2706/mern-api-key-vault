@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
-import FormContainer from "../components/FormContainer";
+import FormContainer from "./FormContainer";
 import { FaEdit, FaRegCopy, FaExternalLinkAlt } from 'react-icons/fa';
 
 const KeyCard = ({ keyItem, index }) => {
@@ -30,17 +30,17 @@ const KeyCard = ({ keyItem, index }) => {
                 </Accordion.Header>
                 <Accordion.Body>
                     <h5>API Key:</h5>
-                    <p>{keyItem.content}</p>
+                    <p>{keyItem.apiKey}</p>
                     <h5>Description:</h5>
                     <p>{keyItem.desc}</p>
                     <small>Last updated: {new Date(keyItem.updatedAt).toLocaleString()}</small>
                     <div className="mt-3 d-flex justify-content-between">
                         <Button variant="secondary" onClick={handleShowModal}><FaEdit /> Edit</Button>
                         <div>
-                            {keyItem.documentation && (
+                            {keyItem.docs && (
                                 <Button
                                     variant="primary"
-                                    onClick={() => openDocumentation(keyItem.documentation)}
+                                    onClick={() => openDocumentation(keyItem.docs)}
                                     className="mx-2"
                                 >
                                     <FaExternalLinkAlt /> Open Docs
@@ -88,9 +88,9 @@ const KeyCard = ({ keyItem, index }) => {
                         </Form.Group>
 
                         {/* Edit Docs Link */}
-                        <Form.Group className="my-2" controlId="documentation">
+                        <Form.Group className="my-2" controlId="docs">
                             <Form.Label>Docs</Form.Label>
-                            <Form.Control type="text" value={keyItem.documentation} >
+                            <Form.Control type="text" value={keyItem.docs} >
                             </Form.Control>
                         </Form.Group>
                     </Form>

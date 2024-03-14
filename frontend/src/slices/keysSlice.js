@@ -7,30 +7,22 @@ export const keysApiSlice = apiSlice.injectEndpoints({
     // Mutations
     createKey: builder.mutation({
       query: (data) => ({
-        url: `${KEYS_URL}/`,
+        url: KEYS_URL,
         method: "POST",
         body: data,
       }),
     }),
-    getKeys: builder.mutation({
-      query: (data) => ({
-        url: `${KEYS_URL}/user/${data.userId}`,
-        method: "GET",
-        body: data,
-      }),
-    }),
     updateKey: builder.mutation({
-      query: (data) => ({
-        url: `${KEYS_URL}/user/${data.userId}/note/${data.keyId}`,
+      query: ({ keyId, ...data }) => ({
+        url: `${KEYS_URL}/key/${keyId}`,
         method: "PUT",
         body: data,
       }),
     }),
     deleteKey: builder.mutation({
-      query: (data) => ({
-        url: `${KEYS_URL}/user/${data.userId}/note/${data.keyId}`,
+      query: ({ keyId }) => ({
+        url: `${KEYS_URL}/key/${keyId}`,
         method: "DELETE",
-        body: data,
       }),
     }),
     shareKey: builder.mutation({
@@ -40,29 +32,30 @@ export const keysApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    getSharedKeys: builder.mutation({
-      query: (data) => ({
-        url: `${KEYS_URL}/shared/user/${data.userId}`,
-        method: "GET",
-        body: data,
+    removeSharedKey: builder.mutation({
+      query: ({ keyId, userIdToRemove }) => ({
+        url: `${KEYS_URL}/key/${keyId}/unshare/${userIdToRemove}`,
+        method: "DELETE",
       }),
     }),
-    removeSharedKey: builder.mutation({
-      query: (data) => ({
-        url: `${KEYS_URL}/note/${data.keyId}/shared/${data.userIdToRemove}`,
-        method: "DELETE",
-        body: data,
-      }),
+
+    // Queries
+    getKeys: builder.query({
+      query: () => `${KEYS_URL}/user`,
+    }),
+    getSharedKeys: builder.query({
+      query: () => `${KEYS_URL}/shared`,
     }),
   }),
+  keepUnusedDataFor: 0,
 });
 
 export const {
   useCreateKeyMutation,
-  useGetQRCodeMutation,
-  useUpdateUserMutation,
+  useGetKeysQuery,
+  useUpdateKeyMutation,
   useDeleteKeyMutation,
   useShareKeyMutation,
-  useGetKeysMutation,
+  useGetSharedKeysQuery,
   useRemoveSharedKeyMutation,
 } = keysApiSlice;

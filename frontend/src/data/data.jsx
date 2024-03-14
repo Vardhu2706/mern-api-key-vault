@@ -7,7 +7,7 @@ const data = [
         "sharedWith": ["634f6fb82cbe5b234ff93b71", "634f6fb82cbe5b234ff93b72"],
         "createdAt": "2024-03-14T10:00:00.000Z",
         "updatedAt": "2024-03-14T10:00:00.000Z",
-        "documentation": "https://openweathermap.org/api"
+        "docs": "https://openweathermap.org/api"
     },
     {
         "title": "Twitter API",
@@ -17,7 +17,7 @@ const data = [
         "sharedWith": [],
         "createdAt": "2024-03-13T09:00:00.000Z",
         "updatedAt": "2024-03-13T09:00:00.000Z",
-        "documentation": "https://developer.twitter.com/en/docs/twitter-api"
+        "docs": "https://developer.twitter.com/en/docs/twitter-api"
     },
     {
         "title": "Chat GPT API",
@@ -27,7 +27,7 @@ const data = [
         "sharedWith": ["634f6fb82cbe5b234ff93b75"],
         "createdAt": "2024-03-12T08:00:00.000Z",
         "updatedAt": "2024-03-12T08:00:00.000Z",
-        "documentation": "https://platform.openai.com/docs/introduction"
+        "docs": "https://platform.openai.com/docs/introduction"
     }
 ];
 

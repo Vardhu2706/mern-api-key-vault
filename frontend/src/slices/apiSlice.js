@@ -5,6 +5,7 @@ export const apiSlice = createApi({
   baseQuery,
   tagTypes: ["User"],
   endpoints: (builder) => ({}),
+  keepUnusedDataFor: 0,
 });
 
 export default apiSlice.reducer;
