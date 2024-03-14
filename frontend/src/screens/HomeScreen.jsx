@@ -1,10 +1,11 @@
 // Imports
 import Hero from "../components/Hero";
+import TabsComponent from "../components/Tab";
 
 const HomeScreen = () => {
   return (
     <>
-      <Hero />
+      <TabsComponent />
     </>
   );
 };

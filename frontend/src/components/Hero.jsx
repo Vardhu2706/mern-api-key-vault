@@ -1,40 +1,62 @@
-import { Container, Card, Button, Form } from "react-bootstrap";
+import { Container, Card, Button, Form, Row, Col } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
+import FormContainer from "../components/FormContainer";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const Hero = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
+  const [title, setTitle] = useState("");
+  const [key, setKey] = useState("");
+  const [desc, setDesc] = useState("")
+
+  const createKeyHandler = async (e) => {
+    e.preventDefault();
+  }
+
   return (
     <div className=" py-5">
-      <Container className="d-flex justify-content-center">
-        <Card className="p-5 d-flex flex-column align-items-center hero-card bg-light w-75">
-          <h1 className="text-center mb-4">API Key Vault</h1>
-          <p className="text-center mb-4">
-            This is a boilerplate for MERN authentication that stores a JWT in
-            an HTTP-Only cookie. Also uses 2FA Token authentication. It also
-            uses Redux Toolkit and the React Bootstrap library
-          </p>
+      <FormContainer>
+        <h6>Create a key to securely store and share.</h6>
 
-          {userInfo ? (
-            <div className="d-flex flex-column align-items-center">
-              <Form.Label>Name: {userInfo.name}</Form.Label>
-              <Form.Label>Email: {userInfo.email}</Form.Label>
-            </div>
-          ) : (
-            <div className="d-flex">
-              <LinkContainer to="/login">
-                <Button variant="primary" className="me-3">
-                  Sign In
-                </Button>
-              </LinkContainer>
-              <LinkContainer to="/register">
-                <Button variant="secondary">Register</Button>
-              </LinkContainer>
-            </div>
-          )}
-        </Card>
-      </Container>
+        <Form onSubmit={createKeyHandler}>
+
+          {/* Key Title */}
+          <Form.Group className="my-2" controlId="title">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" placeholder="Enter Title" value={title} onChange={(e) => setTitle(e.target.value)}>
+            </Form.Control>
+          </Form.Group>
+
+          {/* Enter Key */}
+          <Form.Group className="my-2" controlId="key">
+            <Form.Label>Key</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter Key"
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+
+          {/* Description */}
+          <Form.Group className="my-2" controlId="desc">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter Description"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+
+          <Button type="submit" variant="primary" className="mt-3">
+            Create Key
+          </Button>
+        </Form>
+      </FormContainer>
     </div>
   );
 };

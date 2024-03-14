@@ -52,7 +52,7 @@ const getQRCode = asyncHandler(async (req, res) => {
   const id = uuidv4();
   try {
     const temp_secret = await speakeasy.generateSecret({
-      name: "MERN 2FA Template",
+      name: "API Key Vault",
     });
     res.json({
       id,
