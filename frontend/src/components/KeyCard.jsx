@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
 import { FaEdit, FaRegCopy, FaExternalLinkAlt, FaRegTrashAlt, FaShareAlt } from 'react-icons/fa';
-import { useUpdateKeyMutation, useDeleteKeyMutation } from "../slices/keysSlice";
+import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation } from "../slices/keysSlice";
 
 const KeyCard = ({ keyItem, index }) => {
 
@@ -9,6 +9,7 @@ const KeyCard = ({ keyItem, index }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const handleShowEditModal = () => setShowEditModal(true);
     const handleCloseEditModal = () => setShowEditModal(false);
+    const [updateKey] = useUpdateKeyMutation();
 
     /* Delete Modal */
     const [showDeleteModal, setDeleteModal] = useState(false);
@@ -21,8 +22,8 @@ const KeyCard = ({ keyItem, index }) => {
     const handleShowShareModal = () => setShowShareModal(true);
     const handleCloseShareModal = () => setShowShareModal(false);
     const [shareEmail, setShareEmail] = useState("");
+    const [shareKeyMutation] = useUpdateKeyMutation();
 
-    const [updateKey] = useUpdateKeyMutation();
 
     /* Local State for form fields */
     const [title, setTitle] = useState(keyItem.title);
@@ -118,7 +119,7 @@ const KeyCard = ({ keyItem, index }) => {
             </Accordion.Item>
 
             {/* Edit Modal  */}
-            <Modal show={showEditModal} onHide={handleCloseEditModal}>
+            <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Item</Modal.Title>
                 </Modal.Header>
@@ -192,7 +193,7 @@ const KeyCard = ({ keyItem, index }) => {
 
 
             {/* Share Modal */}
-            <Modal show={showShareModal} onHide={handleCloseShareModal}>
+            <Modal show={showShareModal} onHide={handleCloseShareModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Share Key</Modal.Title>
                 </Modal.Header>

@@ -17,7 +17,7 @@ const KeyContainer = ({ keys }) => {
 
     return (
         <Container>
-            <Accordion defaultActiveKey="0">
+            <Accordion>
                 {sortedKeys.map((key, index) => (
                     // It's better to avoid using indexes as keys if you have unique identifiers
                     <KeyCard key={key.id || index} keyItem={key} index={index} />
