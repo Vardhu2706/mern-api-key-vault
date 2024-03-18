@@ -10,8 +10,7 @@ import User from "../models/userModel.js";
 // @access  Private
 const createKey = expressAsyncHandler(async (req, res) => {
   try {
-    const { title, apiKey, desc, docs } = req.body;
-    console.log({ title, apiKey, desc, docs });
+    const { title, apiKey, desc, docs, } = req.body;
 
     // Validate the input
     if (!title || !apiKey || !desc || !docs) {
@@ -30,7 +29,8 @@ const createKey = expressAsyncHandler(async (req, res) => {
       apiKey,
       desc,
       docs,
-      author: req.user._id // Use the authenticated user's ID as the author
+      author: req.user._id,
+      email: req.user.email,
     });
 
     // Successfully created the key
@@ -100,7 +100,6 @@ const updateKey = expressAsyncHandler(async (req, res) => {
 // @access  Private
 const deleteKey = expressAsyncHandler(async (req, res) => {
   try {
-    // Directly delete the key by ID and check the result
     const result = await Key.findByIdAndDelete(req.params.keyId);
 
     if (result) {
@@ -116,26 +115,38 @@ const deleteKey = expressAsyncHandler(async (req, res) => {
 });
 
 
-
 // @desc    Share a key with another user
 // @route   POST /api/keys/share
 // @access  Private
 const shareKey = expressAsyncHandler(async (req, res) => {
   try {
-    const { keyId, userIdToShare } = req.body;
+    const { keyId, userEmailToShare } = req.body;
+
+    // Check if the user exists
+    const userToShareWith = await User.findOne({ email: userEmailToShare });
+    if (!userToShareWith) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
     const key = await Key.findById(keyId);
 
-    if (key && !key.sharedWith.includes(userIdToShare)) {
-      key.sharedWith.push(userIdToShare);
-      await key.save();
-      return res.send({ message: 'Key shared successfully' });
+    // Check if Key is present and not already shared with the user
+    if (key) {
+      const userIdToShare = userToShareWith._id;
+
+      if (!key.sharedWith.includes(userIdToShare)) {
+        key.sharedWith.push(userIdToShare);
+        await key.save();
+        res.send({ message: 'Key shared successfully' });
+      } else {
+        res.status(400).send({ message: 'Key already shared with this user' });
+      }
     } else {
-      res.status(400)
-      throw new Error('Key already shared with this user or key not found');
+      res.status(404).send({ message: 'Key not found' });
     }
   } catch (error) {
-    res.status(500);
-    throw new Error('Error sharing key');
+    res.status(500).send({ message: error.message });
   }
 });
 

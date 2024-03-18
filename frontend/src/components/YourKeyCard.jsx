@@ -3,8 +3,9 @@ import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
 import { FaEdit, FaRegCopy, FaExternalLinkAlt, FaRegTrashAlt, FaShareAlt } from 'react-icons/fa';
 import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation } from "../slices/keysSlice";
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
-const KeyCard = ({ keyItem, index }) => {
+const YourKeyCard = ({ keyItem, index, tabName }) => {
 
     // Edit Moda
     const [showEditModal, setShowEditModal] = useState(false);
@@ -23,7 +24,7 @@ const KeyCard = ({ keyItem, index }) => {
     const handleShowShareModal = () => setShowShareModal(true);
     const handleCloseShareModal = () => setShowShareModal(false);
     const [shareEmail, setShareEmail] = useState("");
-    const [shareKeyMutation] = useUpdateKeyMutation();
+    const [shareKeyMutation] = useShareKeyMutation();
 
 
     /* Local State for form fields */
@@ -59,21 +60,20 @@ const KeyCard = ({ keyItem, index }) => {
     // Handle Share
     const handleShare = async () => {
         try {
-            await shareKeyMutation({ keyId: keyItem._id, email: shareEmail }).unwrap();
-            alert('Key shared successfully');
-            setShareEmail(''); // Reset the input field
+            await shareKeyMutation({ keyId: keyItem._id, userEmailToShare: shareEmail }).unwrap();
+            toast.success('Key shared successfully');
+            setShareEmail('');
             handleCloseShareModal();
-        } catch (error) {
-            console.error('Failed to share key:', error);
-            // Handle the error, possibly by displaying a message to the user
+        } catch (err) {
+            toast.error(err?.data?.message || err.message);
         }
     };
 
     const handleDelete = async () => {
-        console.log("test", keyItem._id)
         try {
             await deleteKey({ keyId: keyItem._id }).unwrap();
             handleCloseDeleteModal();
+            toast.success("Key deleted successfully");
         } catch (err) {
             toast.error(err?.data?.message || err.message);
         }
@@ -91,11 +91,15 @@ const KeyCard = ({ keyItem, index }) => {
                     <h5>Description:</h5>
                     <p>{keyItem.desc}</p>
                     <small>Last updated: {new Date(keyItem.updatedAt).toLocaleString()}</small>
+
+
                     <div className="mt-3 d-flex justify-content-between">
+
                         <div>
                             <Button variant="secondary" onClick={handleShowEditModal}><FaEdit /> Edit</Button>
                             <Button variant="danger mx-2" onClick={handleShowDeleteModal}><FaRegTrashAlt /> Delete</Button>
                         </div>
+
 
                         <div>
                             <Button variant="primary" onClick={handleShowShareModal}><FaShareAlt /> Share</Button>
@@ -229,4 +233,4 @@ const KeyCard = ({ keyItem, index }) => {
     );
 };
 
-export default KeyCard;
+export default YourKeyCard;

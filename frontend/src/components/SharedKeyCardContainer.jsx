@@ -1,8 +1,9 @@
 import React from 'react';
 import { Container, Accordion, Card } from 'react-bootstrap';
-import KeyCard from './KeyCard'; // Adjust the path as needed
+import SharedKeyCard from "./SharedKeyCard";
 
-const KeyContainer = ({ keys }) => {
+const SharedKeyCardContainer = ({ keys, tabName }) => {
+
     // Check if keys is undefined or an empty array and handle accordingly
     if (typeof keys === 'undefined' || keys.length === 0) {
         return (
@@ -19,12 +20,11 @@ const KeyContainer = ({ keys }) => {
         <Container>
             <Accordion>
                 {sortedKeys.map((key, index) => (
-                    // It's better to avoid using indexes as keys if you have unique identifiers
-                    <KeyCard key={key.id || index} keyItem={key} index={index} />
+                    <SharedKeyCard key={key.id || index} keyItem={key} index={index} tabName />
                 ))}
             </Accordion>
         </Container>
     );
 };
 
-export default KeyContainer;
+export default SharedKeyCardContainer;

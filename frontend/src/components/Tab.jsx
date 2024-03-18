@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import CreateKey from './CreateKey';
-import KeyContainer from './KeyContainer';
+import YourKeyCardContainer from "./YourKeyCardContainer";
+import SharedKeyCardContainer from "./SharedKeyCardContainer";
 import Loader from './Loader';
+import { useSelector } from 'react-redux';
 import { useGetSharedKeysQuery, useGetKeysQuery } from "../slices/keysSlice";
 
 function TabsComponent() {
     const [key, setKey] = useState('create-key');
+    const { userInfo } = useSelector((state) => state.auth);
     const {
         data: userKeys,
         isLoading: isLoadingUserKeys
@@ -33,10 +36,10 @@ function TabsComponent() {
                 <CreateKey setActiveKey={setKey} />
             </Tab>
             <Tab eventKey="your-keys" title="Your Keys">
-                {isLoadingUserKeys ? <Loader /> : <KeyContainer keys={userKeys} />}
+                {isLoadingUserKeys ? <Loader /> : <YourKeyCardContainer keys={userKeys} tabName={"your-keys"} />}
             </Tab>
             <Tab eventKey="shared-keys" title="Shared Keys">
-                {isLoadingSharedKeys ? <Loader /> : <KeyContainer keys={sharedKeys} />}
+                {isLoadingSharedKeys ? <Loader /> : <SharedKeyCardContainer keys={sharedKeys} tabName={"shared-keys"} />}
             </Tab>
         </Tabs>
     );

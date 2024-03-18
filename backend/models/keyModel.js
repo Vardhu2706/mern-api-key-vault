@@ -32,6 +32,10 @@ const keySchema = mongoose.Schema(
       ref: "User",
       required: true
     },
+    email: {
+      type: String,
+      required: true
+    },
     sharedWith: [
       {
         type: mongoose.Schema.Types.ObjectId,

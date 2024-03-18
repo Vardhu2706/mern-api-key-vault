@@ -53,7 +53,7 @@ const RegisterScreen = () => {
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
     } else {
-      console.log({ name, email, password, secret, token, otpAuthURL });
+
       try {
         const res = await register({
           name,

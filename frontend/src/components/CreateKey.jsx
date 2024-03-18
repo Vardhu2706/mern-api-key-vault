@@ -6,6 +6,9 @@ import { useCreateKeyMutation } from '../slices/keysSlice';
 import Loader from "./Loader";
 
 const CreateKey = ({ setActiveKey }) => {
+
+  const { userInfo } = useSelector((state) => state.auth);
+
   const [createKey, { isLoading }] = useCreateKeyMutation();
   const [title, setTitle] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -16,7 +19,7 @@ const CreateKey = ({ setActiveKey }) => {
     e.preventDefault();
     try {
       await createKey({ title, apiKey, desc, docs }).unwrap();
-      // Switch to the "Your Keys" tab upon success
+
       setActiveKey('your-keys');
       clear();
     } catch (err) {
