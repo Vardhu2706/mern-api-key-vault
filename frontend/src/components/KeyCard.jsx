@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
 import { FaEdit, FaRegCopy, FaExternalLinkAlt, FaRegTrashAlt, FaShareAlt } from 'react-icons/fa';
 import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation } from "../slices/keysSlice";
+import { toast } from 'react-toastify';
 
 const KeyCard = ({ keyItem, index }) => {
 
@@ -31,13 +32,11 @@ const KeyCard = ({ keyItem, index }) => {
     const [desc, setDesc] = useState(keyItem.desc);
     const [docs, setDocs] = useState(keyItem.docs);
 
-
-
     const copyToClipboard = (content) => {
         navigator.clipboard.writeText(content).then(() => {
-            alert('API Key copied to clipboard!');
+            toast.success("API Key copied to clipboard!");
         }, (err) => {
-            console.error('Failed to copy content: ', err);
+            toast.error(err?.data?.message || err.message);
         });
     };
 
@@ -71,17 +70,14 @@ const KeyCard = ({ keyItem, index }) => {
     };
 
     const handleDelete = async () => {
+        console.log("test", keyItem._id)
         try {
             await deleteKey({ keyId: keyItem._id }).unwrap();
             handleCloseDeleteModal();
-            // Optionally, trigger any additional actions, like refreshing the list of keys
-        } catch (error) {
-            console.error('Failed to delete the key:', error);
-            // Handle the error, possibly by displaying a message to the user
+        } catch (err) {
+            toast.error(err?.data?.message || err.message);
         }
     };
-
-
 
     return (
         <Card className="mb-2">

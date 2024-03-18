@@ -3,6 +3,7 @@ import { apiSlice } from "./apiSlice";
 const KEYS_URL = "/api/keys";
 
 export const keysApiSlice = apiSlice.injectEndpoints({
+  tagTypes: ['YourKeys', 'SharedKeys'],
   endpoints: (builder) => ({
     // Mutations
     createKey: builder.mutation({
@@ -24,6 +25,7 @@ export const keysApiSlice = apiSlice.injectEndpoints({
         url: `${KEYS_URL}/key/${keyId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ['YourKeys'],
     }),
     shareKey: builder.mutation({
       query: (data) => ({
@@ -42,9 +44,11 @@ export const keysApiSlice = apiSlice.injectEndpoints({
     // Queries
     getKeys: builder.query({
       query: () => `${KEYS_URL}/user`,
+      providesTags: ['YourKeys'],
     }),
     getSharedKeys: builder.query({
       query: () => `${KEYS_URL}/shared`,
+      providesTags: ['SharedKeys'],
     }),
   }),
   keepUnusedDataFor: 0,

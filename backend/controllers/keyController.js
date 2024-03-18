@@ -96,13 +96,14 @@ const updateKey = expressAsyncHandler(async (req, res) => {
 
 
 // @desc    Delete a key
-// @route   DELETE /api/keys/:id
+// @route   DELETE /api/keys/:keyId
 // @access  Private
 const deleteKey = expressAsyncHandler(async (req, res) => {
   try {
-    const key = await Key.findById(req.params.id);
-    if (key) {
-      await key.remove();
+    // Directly delete the key by ID and check the result
+    const result = await Key.findByIdAndDelete(req.params.keyId);
+
+    if (result) {
       return res.send({ message: 'Key deleted successfully' });
     } else {
       res.status(404);
@@ -110,9 +111,10 @@ const deleteKey = expressAsyncHandler(async (req, res) => {
     }
   } catch (error) {
     res.status(500);
-    throw new Error('Error deleting key');
+    throw new Error('Error sharing key');
   }
 });
+
 
 
 // @desc    Share a key with another user
