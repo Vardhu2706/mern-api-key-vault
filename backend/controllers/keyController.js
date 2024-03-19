@@ -64,13 +64,17 @@ const getKeysByUser = expressAsyncHandler(async (req, res) => {
 const getSharedKeys = expressAsyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
-    const keys = await Key.find({ sharedWith: userId });
-    return res.status(200).json(keys);
+
+    // Update the query to match the userId inside the objects of the sharedWith array
+    const keys = await Key.find({ "sharedWith.userId": userId });
+
+    res.status(200).json(keys);
   } catch (error) {
-    res.status(500);
-    throw new Error('Error fetching shared keys');
+    console.error('Error fetching shared keys:', error);
+    res.status(500).send({ message: 'Error fetching shared keys', error: error.toString() });
   }
 });
+
 
 
 // @desc    Update a key's details
@@ -122,31 +126,38 @@ const shareKey = expressAsyncHandler(async (req, res) => {
   try {
     const { keyId, userEmailToShare } = req.body;
 
-    // Check if the user exists
+    // Prevent user from sharing the key with themselves
+    if (req.user.email === userEmailToShare) {
+      return res.status(400).send({ message: "Cannot share the key with yourself" });
+    }
+
     const userToShareWith = await User.findOne({ email: userEmailToShare });
     if (!userToShareWith) {
-      res.status(404);
-      throw new Error('User not found');
+      return res.status(404).send({ message: 'User not found' });
     }
 
     const key = await Key.findById(keyId);
-
-    // Check if Key is present and not already shared with the user
-    if (key) {
-      const userIdToShare = userToShareWith._id;
-
-      if (!key.sharedWith.includes(userIdToShare)) {
-        key.sharedWith.push(userIdToShare);
-        await key.save();
-        res.send({ message: 'Key shared successfully' });
-      } else {
-        res.status(400).send({ message: 'Key already shared with this user' });
-      }
-    } else {
-      res.status(404).send({ message: 'Key not found' });
+    if (!key) {
+      return res.status(404).send({ message: 'Key not found' });
     }
+
+    const isAlreadyShared = key.sharedWith.some(sharedUser => sharedUser.userId.equals(userToShareWith._id));
+    if (isAlreadyShared) {
+      return res.status(400).send({ message: 'Key already shared with this user' });
+    }
+
+    const sharedUserDetails = {
+      userId: userToShareWith._id,
+      email: userToShareWith.email
+    };
+
+    key.sharedWith.push(sharedUserDetails);
+    await key.save();
+
+    res.send({ message: 'Key shared successfully', sharedUser: sharedUserDetails });
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    console.error('Error sharing key:', error);
+    res.status(500).send({ message: 'Error sharing key', error: error.toString() });
   }
 });
 
@@ -156,12 +167,14 @@ const shareKey = expressAsyncHandler(async (req, res) => {
 // @route   POST /api/keys/unshare
 // @access  Private
 const removeShare = expressAsyncHandler(async (req, res) => {
+
   try {
-    const { keyId, userIdToRemove } = req.body;
+
+    const { keyId, userIdToRemove } = req.params;
     const key = await Key.findById(keyId);
 
     if (key) {
-      key.sharedWith = key.sharedWith.filter(userId => userId.toString() !== userIdToRemove);
+      key.sharedWith = key.sharedWith.filter(shared => !shared.userId.equals(userIdToRemove));
       await key.save();
       return res.send({ message: 'User removed from shared list' });
     } else {

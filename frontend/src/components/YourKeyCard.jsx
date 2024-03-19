@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
 import { FaEdit, FaRegCopy, FaExternalLinkAlt, FaRegTrashAlt, FaShareAlt } from 'react-icons/fa';
-import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation } from "../slices/keysSlice";
+import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation, useRemoveSharedKeyMutation } from "../slices/keysSlice";
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { FaRegWindowClose } from "react-icons/fa";
 
-const YourKeyCard = ({ keyItem, index, tabName }) => {
+
+const YourKeyCard = ({ keyItem, index }) => {
+
+    const [sharedUsers, setSharedUsers] = useState(keyItem.sharedWith);
 
     // Edit Moda
     const [showEditModal, setShowEditModal] = useState(false);
@@ -25,6 +29,7 @@ const YourKeyCard = ({ keyItem, index, tabName }) => {
     const handleCloseShareModal = () => setShowShareModal(false);
     const [shareEmail, setShareEmail] = useState("");
     const [shareKeyMutation] = useShareKeyMutation();
+    const [removeSharedKeyMutation] = useRemoveSharedKeyMutation();
 
 
     /* Local State for form fields */
@@ -53,21 +58,42 @@ const YourKeyCard = ({ keyItem, index, tabName }) => {
             // You might want to refetch or update the local state to reflect these changes
         } catch (err) {
             console.error('Failed to update key:', err);
-            // Handle the error (e.g., showing a notification to the user)
         }
     };
 
-    // Handle Share
     const handleShare = async () => {
         try {
-            await shareKeyMutation({ keyId: keyItem._id, userEmailToShare: shareEmail }).unwrap();
+            const response = await shareKeyMutation({ keyId: keyItem._id, userEmailToShare: shareEmail }).unwrap();
             toast.success('Key shared successfully');
+
+            // Update the local state with the new shared user
+            const newSharedUser = response.sharedUser;
+            if (newSharedUser) {
+                setSharedUsers([...sharedUsers, newSharedUser]);
+            }
+
             setShareEmail('');
-            handleCloseShareModal();
+            // handleCloseShareModal();
         } catch (err) {
             toast.error(err?.data?.message || err.message);
         }
     };
+
+
+
+    const handleRemoveShare = async (userIdToRemove) => {
+        try {
+            await removeSharedKeyMutation({ keyId: keyItem._id, userIdToRemove }).unwrap();
+            toast.success('Share removed successfully');
+
+            const updatedSharedUsers = sharedUsers.filter(user => user.userId !== userIdToRemove);
+            setSharedUsers(updatedSharedUsers);
+        } catch (err) {
+            toast.error(err?.data?.message || err.message);
+        }
+    };
+
+
 
     const handleDelete = async () => {
         try {
@@ -91,16 +117,11 @@ const YourKeyCard = ({ keyItem, index, tabName }) => {
                     <h5>Description:</h5>
                     <p>{keyItem.desc}</p>
                     <small>Last updated: {new Date(keyItem.updatedAt).toLocaleString()}</small>
-
-
                     <div className="mt-3 d-flex justify-content-between">
-
                         <div>
                             <Button variant="secondary" onClick={handleShowEditModal}><FaEdit /> Edit</Button>
                             <Button variant="danger mx-2" onClick={handleShowDeleteModal}><FaRegTrashAlt /> Delete</Button>
                         </div>
-
-
                         <div>
                             <Button variant="primary" onClick={handleShowShareModal}><FaShareAlt /> Share</Button>
                             {keyItem.docs && (
@@ -190,25 +211,25 @@ const YourKeyCard = ({ keyItem, index, tabName }) => {
                 </Modal.Footer>
             </Modal>
 
-
-
             {/* Share Modal */}
             <Modal show={showShareModal} onHide={handleCloseShareModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Share Key</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h5>Already Shared With:</h5>
+                    <h5>Sharing with:</h5>
                     <ul>
-                        {keyItem.sharedWithEmails && keyItem.sharedWithEmails.length > 0 ? (
-                            keyItem.sharedWithEmails.map((email, index) => (
-                                <li key={index}>{email}</li>
+                        {sharedUsers && sharedUsers.length > 0 ? (
+                            sharedUsers.map((sharedUser, index) => (
+                                <div key={index} className="mt-3 d-flex justify-content-between align-items-center">
+                                    <li key={sharedUser._id}>{sharedUser.email}</li>
+                                    <Button variant="danger" onClick={() => handleRemoveShare(sharedUser.userId)}><FaRegWindowClose /> Remove</Button>
+                                </div>
                             ))
                         ) : (
                             <p>This key has not been shared with anyone yet.</p>
                         )}
                     </ul>
-
                     <Form>
                         <Form.Group controlId="shareWithEmail">
                             <Form.Label>Email Address</Form.Label>

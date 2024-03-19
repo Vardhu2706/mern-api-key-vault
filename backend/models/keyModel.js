@@ -9,6 +9,18 @@ const cryptr = new Cryptr("apiKeyVault2024", {
   saltLengthL: 10,
 });
 
+const sharedWithSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  }
+});
+
 const keySchema = mongoose.Schema(
   {
     title: {
@@ -36,12 +48,7 @@ const keySchema = mongoose.Schema(
       type: String,
       required: true
     },
-    sharedWith: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
-    ]
+    sharedWith: [sharedWithSchema]
   },
   {
     timestamps: true

@@ -3,11 +3,8 @@ import { Card, Accordion, Button, Modal, Form } from 'react-bootstrap';
 import { FaEdit, FaRegCopy, FaExternalLinkAlt, FaRegTrashAlt, FaShareAlt } from 'react-icons/fa';
 import { useUpdateKeyMutation, useDeleteKeyMutation, useShareKeyMutation } from "../slices/keysSlice";
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
 
 const SharedKeyCard = ({ keyItem, index }) => {
-
-
 
     /* Local State for form fields */
     const [title, setTitle] = useState(keyItem.title);

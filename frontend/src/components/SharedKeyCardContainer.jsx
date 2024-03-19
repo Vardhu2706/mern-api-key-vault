@@ -8,7 +8,7 @@ const SharedKeyCardContainer = ({ keys, tabName }) => {
     if (typeof keys === 'undefined' || keys.length === 0) {
         return (
             <Container>
-                <Card className="m-2 p-2">No keys to display or data is still loading.</Card>
+                <Card className="m-2 p-2">No keys to display.</Card>
             </Container>
         );
     }

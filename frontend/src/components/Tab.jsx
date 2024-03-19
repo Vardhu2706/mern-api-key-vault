@@ -30,9 +30,9 @@ function TabsComponent() {
             onSelect={handleSelect}
             className="mb-4 mt-4"
             justify
+            transition={true}
         >
             <Tab eventKey="create-key" title="Create a Key">
-                {/* Pass setKey to CreateKey to allow tab switching */}
                 <CreateKey setActiveKey={setKey} />
             </Tab>
             <Tab eventKey="your-keys" title="Your Keys">

@@ -138,17 +138,22 @@ const RegisterScreen = () => {
           {isLoading ? (
             <Loader />
           ) : (
-            <Button type="submit" variant="primary" className="mt-3">
-              Sign Up
-            </Button>
+
+            <>
+              <Button type="submit" variant="primary" className="mt-3">
+                Sign Up
+              </Button>
+              <Row className="py-3">
+                <Col>
+                  {" "}
+                  New Customer? <Link to="/login">Login</Link>
+                </Col>
+              </Row>
+            </>
+
           )}
 
-          <Row className="py-3">
-            <Col>
-              {" "}
-              New Customer? <Link to="/login">Login</Link>
-            </Col>
-          </Row>
+
         </Form>
       </FormContainer>
     </>
