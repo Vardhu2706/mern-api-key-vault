@@ -12,6 +12,7 @@ The application follows the typical MERN stack architecture:
     Node.js: Runtime environment for executing server-side JavaScript code.
 
 3. Components
+   
 3.1 Frontend
 
     React Components: The UI is built using React components.
